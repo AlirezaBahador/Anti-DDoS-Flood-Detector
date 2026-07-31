@@ -1,0 +1,35 @@
+# =========================================================
+# Anti-DDoS Flood Detector - Configuration
+# =========================================================
+
+network:
+  # Network interface to listen on (use `ip a` to find yours)
+  interface: eth0
+  # Berkeley Packet Filter applied at capture level (performance)
+  bpf_filter: "ip"
+
+thresholds:
+  syn_flood:
+    packet_count: 100      # max SYN packets
+    time_window: 5         # seconds
+  udp_flood:
+    packet_count: 150
+    time_window: 5
+  icmp_flood:
+    packet_count: 80
+    time_window: 5
+
+mitigation:
+  enabled: true            # set to false for detection-only (dry-run) mode
+  method: iptables         # iptables | log_only
+  block_duration: 300      # seconds an offending IP stays blocked
+
+logging:
+  log_file: logs/flood_detector.log
+  log_level: INFO          # DEBUG | INFO | WARNING | ERROR
+  max_bytes: 5242880       # 5 MB per log file before rotation
+  backup_count: 5
+
+# IPs that must never be auto-blocked (gateways, monitoring hosts, etc.)
+whitelist:
+  - 127.0.0.1
